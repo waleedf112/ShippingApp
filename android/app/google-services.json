@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "354017084542",
+    "firebase_url": "https://database2-project-shipping-app.firebaseio.com",
+    "project_id": "database2-project-shipping-app",
+    "storage_bucket": "database2-project-shipping-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:354017084542:android:5582ee888eb292c98a042f",
+        "android_client_info": {
+          "package_name": "com.waleedalenazi.database2_project_shipping_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "354017084542-iae3rr1a98uie1qc8ieanr4qgc395mj2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCYnjH2iIyjTVGuSRriFnE5TrpZOxQRknU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "354017084542-iae3rr1a98uie1qc8ieanr4qgc395mj2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
