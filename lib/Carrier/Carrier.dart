@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class CustomerScreen extends StatelessWidget {
+class CarrierScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(

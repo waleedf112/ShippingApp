@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'Carrier/Carrier.dart';
 import 'Customer/Customer.dart';
-import 'Driver/Driver.dart';
 import 'FirebaseDatabase/SignupAndSignin.dart';
+import 'loading.dart';
 
 void main() => runApp(MyApp());
 
@@ -43,9 +44,14 @@ class MyHomePage extends StatelessWidget {
       onWillPop: () {},
       child: Scaffold(
         backgroundColor: Colors.green,
-        body: ListView(
-          reverse: true,
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
+            Icon(
+              Icons.local_shipping,
+              size: 150,
+              color: Colors.white.withOpacity(0.9),
+            ),
             Card(
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30)),
@@ -71,10 +77,10 @@ class MyHomePage extends StatelessWidget {
                           SizedBox(height: 20),
                           CustomButton(
                             labelText: 'تسجيل',
-                            function: () {
+                            function: () async {
                               if (usernameController.text.trim().isNotEmpty &&
                                   passwordController.text.trim().isNotEmpty)
-                                registerUser(context, {
+                                await registerUser(context, {
                                   'username': usernameController.text,
                                   'password': passwordController.text,
                                 }).then((userExist) {
@@ -113,7 +119,7 @@ class MyHomePage extends StatelessWidget {
                                       Navigator.of(context).pushReplacement(
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                DriverScreen()),
+                                                CarrierScreen()),
                                       );
                                     }
                                   }
@@ -177,7 +183,7 @@ class MyHomePage extends StatelessWidget {
                   ],
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -211,7 +217,16 @@ class _ShowOptions extends StatelessWidget {
                       style: TextStyle(
                           fontSize: 30, color: Colors.black.withOpacity(0.7)),
                     ),
-                    CustomButton(),
+                    SizedBox(height: 20),
+                    CustomButton(
+                      labelText: 'مرسل او مستقبل',
+                      function: () async => assignType(context, 'Customer'),
+                    ),
+                    SizedBox(height: 10),
+                    CustomButton(
+                      labelText: 'توصيل',
+                      function: () async => assignType(context, 'Carrier'),
+                    ),
                   ],
                 ),
               ),
