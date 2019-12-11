@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'Customer/Customer.dart';
+import 'Driver/Driver.dart';
 import 'FirebaseDatabase/SignupAndSignin.dart';
 
 void main() => runApp(MyApp());
@@ -35,41 +37,21 @@ class MyHomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildButton({labelText, function}) {
-    return RaisedButton(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-      color: Colors.green,
-      elevation: 0,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            child: Text(
-              labelText,
-              style: TextStyle(color: Colors.white, fontSize: 20),
-            ),
-          ),
-        ],
-      ),
-      onPressed: function,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: (){},
-          child: Scaffold(
+      onWillPop: () {},
+      child: Scaffold(
         backgroundColor: Colors.green,
         body: ListView(
           reverse: true,
           children: <Widget>[
             Card(
-              shape:
-                  RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30)),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
                 child: Row(
                   children: <Widget>[
                     Expanded(
@@ -87,7 +69,7 @@ class MyHomePage extends StatelessWidget {
                             labelText: 'كلمة السر',
                           ),
                           SizedBox(height: 20),
-                          _buildButton(
+                          CustomButton(
                             labelText: 'تسجيل',
                             function: () {
                               if (usernameController.text.trim().isNotEmpty &&
@@ -121,16 +103,25 @@ class MyHomePage extends StatelessWidget {
                                       },
                                     );
                                   } else {
-                                    Navigator.of(context).pushReplacement(
-                                      MaterialPageRoute(
-                                          builder: (context) => Scaffold()),
-                                    );
+                                    if (currentUser.type == null) {
+                                      Navigator.of(context).pushReplacement(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                _ShowOptions()),
+                                      );
+                                    } else {
+                                      Navigator.of(context).pushReplacement(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                DriverScreen()),
+                                      );
+                                    }
                                   }
                                 });
                             },
                           ),
                           SizedBox(height: 20),
-                          _buildButton(
+                          CustomButton(
                             labelText: 'الدخول',
                             function: () {
                               if (usernameController.text.trim().isNotEmpty &&
@@ -140,10 +131,19 @@ class MyHomePage extends StatelessWidget {
                                   'password': passwordController.text,
                                 }).then((successful) {
                                   if (successful) {
-                                    Navigator.of(context).pushReplacement(
-                                      MaterialPageRoute(
-                                          builder: (context) => Scaffold()),
-                                    );
+                                    if (currentUser.type == null) {
+                                      Navigator.of(context).pushReplacement(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                _ShowOptions()),
+                                      );
+                                    } else {
+                                      Navigator.of(context).pushReplacement(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                CustomerScreen()),
+                                      );
+                                    }
                                   } else {
                                     showDialog(
                                       context: context,
@@ -185,38 +185,67 @@ class MyHomePage extends StatelessWidget {
   }
 }
 
-/* 
-class MyHomePage extends StatelessWidget {
+class _ShowOptions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: (){},
-          child: Scaffold(
-        appBar: AppBar(elevation: 0),
-        body: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              RaisedButton(
-                onPressed: ()  => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => DeliveryScreen())),
-                child: Text('توصيل'),
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        title: Text('مرحباً بك'),
+        centerTitle: true,
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Card(
+              elevation: 8,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15)),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: <Widget>[
+                    Text(
+                      'اختر نوع الحساب',
+                      style: TextStyle(
+                          fontSize: 30, color: Colors.black.withOpacity(0.7)),
+                    ),
+                    CustomButton(),
+                  ],
+                ),
               ),
-              RaisedButton(
-                onPressed: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => SenderScreen())),
-                child: Text('ارسال شحنه'),
-              ),
-              RaisedButton(
-                onPressed: () {},
-                child: Text('تتبع'),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
- */
+
+class CustomButton extends StatelessWidget {
+  final String labelText;
+  final Function function;
+  CustomButton({this.labelText, this.function});
+  @override
+  Widget build(BuildContext context) {
+    return RaisedButton(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+      color: Colors.green,
+      elevation: 0,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            child: Text(
+              labelText ?? 'text',
+              style: TextStyle(color: Colors.white, fontSize: 20),
+            ),
+          ),
+        ],
+      ),
+      onPressed: function ?? () {},
+    );
+  }
+}
