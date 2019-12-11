@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'Carrier/Carrier.dart';
 import 'Customer/Customer.dart';
@@ -11,6 +12,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
+        scaffoldBackgroundColor: Color(0xFFF2F3F8),
         primarySwatch: Colors.green,
       ),
       home: MyHomePage(),
@@ -40,6 +42,10 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (kDebugMode) {
+      usernameController.text = 's';
+      passwordController.text = 's';
+    }
     return WillPopScope(
       onWillPop: () {},
       child: Scaffold(
@@ -241,26 +247,70 @@ class _ShowOptions extends StatelessWidget {
 class CustomButton extends StatelessWidget {
   final String labelText;
   final Function function;
-  CustomButton({this.labelText, this.function});
+  final EdgeInsets padding;
+  final double fontSize;
+  final bool expanded;
+  final bool isRTL;
+  final IconData icon;
+  CustomButton({
+    this.labelText,
+    this.function,
+    this.padding,
+    this.fontSize,
+    this.expanded = false,
+    this.isRTL = false,
+    this.icon,
+  });
   @override
   Widget build(BuildContext context) {
-    return RaisedButton(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-      color: Colors.green,
-      elevation: 0,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            child: Text(
-              labelText ?? 'text',
-              style: TextStyle(color: Colors.white, fontSize: 20),
-            ),
-          ),
-        ],
-      ),
-      onPressed: function ?? () {},
-    );
+    _build() {
+      return RaisedButton(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+        color: Colors.green,
+        elevation: 0,
+        child: Row(
+          textDirection: !isRTL ? TextDirection.ltr : TextDirection.rtl,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            icon != null
+                ? Icon(
+                    icon,
+                    color: Colors.white,
+                  )
+                : Container(),
+            expanded
+                ? Expanded(
+                    child: Padding(
+                      padding:
+                          padding ?? const EdgeInsets.symmetric(vertical: 10),
+                      child: Text(
+                        labelText ?? 'text',
+                        style: TextStyle(
+                            color: Colors.white, fontSize: fontSize ?? 20),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  )
+                : Padding(
+                    padding:
+                        padding ?? const EdgeInsets.symmetric(vertical: 10),
+                    child: Text(
+                      labelText ?? 'text',
+                      style: TextStyle(
+                          color: Colors.white, fontSize: fontSize ?? 20),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+          ],
+        ),
+        onPressed: function ?? () {},
+      );
+    }
+
+    return expanded
+        ? Expanded(
+            child: _build(),
+          )
+        : _build();
   }
 }
