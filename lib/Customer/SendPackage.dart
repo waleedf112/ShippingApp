@@ -292,7 +292,7 @@ class _RecevierInfo extends StatelessWidget {
                 shipment.receiverphone = receiverphone.text.trim();
                 shipment.receiverCity = receiverCity.text.trim();
                 shipment.receiverAddress = receiverAddress.text.trim();
-                
+
                 loadingScreen(
                     context: context,
                     function: () async {

@@ -10,7 +10,7 @@ Stream getAllActiveShipments() {
       .snapshots();
 }
 
- placeNewShipment(Shipment shipment) async {
+placeNewShipment(Shipment shipment) async {
   String shipment_id = shipment.id.toString();
   String receiver_id = shipment.receiverId.toString();
   await Firestore.instance
@@ -50,9 +50,9 @@ Stream getAllActiveShipments() {
   });
 }
 
-Stream trackShipment(int trackingNumber){
+Stream trackShipment(int trackingNumber) {
   print(trackingNumber);
-    return Firestore.instance
+  return Firestore.instance
       .collection('Shipments')
       .document(trackingNumber.toString())
       .snapshots();

@@ -77,7 +77,6 @@ class _TrackShipmentState extends State<TrackShipment> {
             stream: trackShipment(widget.trackingNumber),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.hasData && snapshot.data.data != null) {
-
                 String shipmentNumber = snapshot.data.data['shipment_id'];
                 String shipmentStatus = snapshot.data.data['status'];
                 Timestamp shipmentDate = snapshot.data.data['registrationDate'];
@@ -114,7 +113,6 @@ class _TrackShipmentState extends State<TrackShipment> {
                                   Text(
                                     shipmentStatus,
                                     textDirection: TextDirection.rtl,
-
                                     style: TextStyle(
                                         color: shipmentStatus == 'تم التوصيل'
                                             ? Colors.green
@@ -129,7 +127,6 @@ class _TrackShipmentState extends State<TrackShipment> {
                               )
                             ],
                           ),
-                          
                         ],
                       ),
                     ));

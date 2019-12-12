@@ -24,7 +24,7 @@ class MyHomePage extends StatelessWidget {
   TextEditingController usernameController = new TextEditingController();
   TextEditingController passwordController = new TextEditingController();
 
-  Widget _buildTextField({icon, labelText, controller,isPassword = false}) {
+  Widget _buildTextField({icon, labelText, controller, isPassword = false}) {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: TextField(
@@ -77,11 +77,10 @@ class MyHomePage extends StatelessWidget {
                           ),
                           SizedBox(height: 20),
                           _buildTextField(
-                            icon: Icons.lock,
-                            controller: passwordController,
-                            labelText: 'كلمة السر',
-                            isPassword: true
-                          ),
+                              icon: Icons.lock,
+                              controller: passwordController,
+                              labelText: 'كلمة السر',
+                              isPassword: true),
                           SizedBox(height: 20),
                           CustomButton(
                             labelText: 'تسجيل',
@@ -158,7 +157,8 @@ class MyHomePage extends StatelessWidget {
                                               builder: (context) =>
                                                   CarrierScreen()),
                                         );
-                                      } else if (currentUser.type == 'Customer') {
+                                      } else if (currentUser.type ==
+                                          'Customer') {
                                         Navigator.of(context).pushReplacement(
                                           MaterialPageRoute(
                                               builder: (context) =>

@@ -184,7 +184,8 @@ class _CarrierScreenState extends State<CarrierScreen> {
                                       );
                                     } else {
                                       return Padding(
-                                        padding: const EdgeInsets.only(top: 200),
+                                        padding:
+                                            const EdgeInsets.only(top: 200),
                                         child: SpinKitHourGlass(
                                           color: Colors.green.withOpacity(0.3),
                                           size: 50.0,
