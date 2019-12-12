@@ -36,3 +36,57 @@ Future getShipmentPrice(shipment_id) async {
   });
   return price;
 }
+
+Future getReceiver(shipmentReceiver) async {
+  return Firestore.instance
+      .collection('Receivers')
+      .document(shipmentReceiver.toString())
+      .get();
+}
+
+Future getSender(shipmentSender) async {
+  return Firestore.instance
+      .collection('User')
+      .document(shipmentSender)
+      .get();
+}
+
+Future assignToShipment(shipment_id) async {
+  await Firestore.instance
+      .collection('Shipments')
+      .document(shipment_id)
+      .updateData({
+    'carrier_userName': currentUser.username,
+    'status': 'تم القبول من قبل ${currentUser.name}',
+  });
+  await Firestore.instance
+      .collection('User')
+      .document(currentUser.username)
+      .updateData({
+    'isBusy': true,
+  });
+}
+
+Future updateStatus(shipment_id, message) async {
+  await Firestore.instance
+      .collection('Shipments')
+      .document(shipment_id)
+      .updateData({
+    'status': message,
+  });
+}
+
+Future delivered(shipment_id) async {
+  await Firestore.instance
+      .collection('Shipments')
+      .document(shipment_id)
+      .updateData({
+    'carrier_userName': 'already delivered',
+  });
+  await Firestore.instance
+      .collection('User')
+      .document(currentUser.username)
+      .updateData({
+    'isBusy': false,
+  });
+}

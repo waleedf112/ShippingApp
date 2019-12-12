@@ -4,7 +4,15 @@ import 'package:database2_project_shipping_app/FirebaseDatabase/CustomerOrder.da
 import 'package:database2_project_shipping_app/FirebaseDatabase/SignupAndSignin.dart';
 import 'package:flutter/material.dart';
 
-class CarrierScreen extends StatelessWidget {
+import '../loading.dart';
+import '../main.dart';
+
+class CarrierScreen extends StatefulWidget {
+  @override
+  _CarrierScreenState createState() => _CarrierScreenState();
+}
+
+class _CarrierScreenState extends State<CarrierScreen> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -36,6 +44,8 @@ class CarrierScreen extends StatelessWidget {
                                   snapshot.data.documents[index]['shipment_id'];
                               String shipmentStatus =
                                   snapshot.data.documents[index]['status'];
+                                  String shipmentSender =
+                                  snapshot.data.documents[index]['sender_userName'];
                               Timestamp shipmentDate = snapshot
                                   .data.documents[index]['registrationDate'];
                               String shipmentDateStr =
@@ -44,90 +54,9 @@ class CarrierScreen extends StatelessWidget {
                                       (shipmentDate.toDate().month).toString() +
                                       '/' +
                                       (shipmentDate.toDate().day).toString();
-                              return Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: Card(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(15)),
-                                    elevation: 5,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(16.0),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        textDirection: TextDirection.rtl,
-                                        children: <Widget>[
-                                          Text('شحنة رقم'),
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: <Widget>[
-                                              Text(
-                                                shipmentNumber,
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black
-                                                        .withOpacity(0.6)),
-                                              ),
-                                              Text(
-                                                shipmentStatus,
-                                                style: TextStyle(
-                                                    color: shipmentStatus ==
-                                                            'تم التوصيل'
-                                                        ? Colors.green
-                                                        : Colors.blue),
-                                              ),
-                                              Text(
-                                                shipmentDateStr,
-                                                style: TextStyle(
-                                                    color: Colors.black
-                                                        .withOpacity(0.3)),
-                                              ),
-                                            ],
-                                          )
-                                        ],
-                                      ),
-                                    )),
-                              );
-                            },
-                          );
-                        }
-                        return Container();
-                      });
-                } else {
-                  return StreamBuilder(
-                      stream: getAllAvailibleShipments(),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          return ListView.builder(
-                            reverse: true,
-                            itemCount: snapshot.data.documents.length,
-                            physics: BouncingScrollPhysics(),
-                            itemBuilder: (BuildContext context, int index) {
-                              String shipmentNumber =
-                                  snapshot.data.documents[index]['shipment_id'];
-                              String shipmentStatus =
-                                  snapshot.data.documents[index]['status'];
-                              Timestamp shipmentDate = snapshot
-                                  .data.documents[index]['registrationDate'];
-                              String shipmentDateStr =
-                                  (shipmentDate.toDate().year).toString() +
-                                      '/' +
-                                      (shipmentDate.toDate().month).toString() +
-                                      '/' +
-                                      (shipmentDate.toDate().day).toString();
-                              String senderCity =
-                                  snapshot.data.documents[index]['senderCity'];
-                              String senderAddress = snapshot
-                                  .data.documents[index]['senderAddress'];
-
                               return FutureBuilder(
-                                  future: getShipmentPrice(snapshot
-                                      .data.documents[index]['shipment_id']),
-                                  builder: (context, snapshot2) {
+                                  future: getSender(shipmentSender),
+                                  builder: (context, snapshot3) {
                                     return Padding(
                                       padding: const EdgeInsets.all(5.0),
                                       child: Card(
@@ -166,18 +95,6 @@ class CarrierScreen extends StatelessWidget {
                                                                       0.6)),
                                                         ),
                                                         Text(
-                                                          shipmentStatus ==
-                                                                  'بانتظار قبول اي مندوب'
-                                                              ? 'متوفرة'
-                                                              : '',
-                                                          style: TextStyle(
-                                                              color: shipmentStatus ==
-                                                                      'بانتظار قبول اي مندوب'
-                                                                  ? Colors.green
-                                                                  : Colors
-                                                                      .blue),
-                                                        ),
-                                                        Text(
                                                           shipmentDateStr,
                                                           style: TextStyle(
                                                               color: Colors
@@ -186,10 +103,9 @@ class CarrierScreen extends StatelessWidget {
                                                                       0.3)),
                                                         ),
                                                       ],
-                                                    )
+                                                    ),
                                                   ],
                                                 ),
-                                                SizedBox(height: 10),
                                                 Row(
                                                   mainAxisAlignment:
                                                       MainAxisAlignment
@@ -199,14 +115,14 @@ class CarrierScreen extends StatelessWidget {
                                                   textDirection:
                                                       TextDirection.rtl,
                                                   children: <Widget>[
-                                                    Text('من'),
+                                                    Text('العميل'),
                                                     Column(
                                                       crossAxisAlignment:
                                                           CrossAxisAlignment
                                                               .start,
                                                       children: <Widget>[
                                                         Text(
-                                                          senderCity,
+                                                          snapshot3.data['name'],
                                                           style: TextStyle(
                                                               fontWeight:
                                                                   FontWeight
@@ -217,34 +133,270 @@ class CarrierScreen extends StatelessWidget {
                                                                       0.6)),
                                                         ),
                                                         Text(
-                                                          senderAddress,
+                                                          snapshot3.data['phoneNumber'],
                                                           style: TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
                                                               color: Colors
                                                                   .black
                                                                   .withOpacity(
-                                                                      0.6)),
-                                                        ),
-                                                        Text(
-                                                          snapshot2.data
-                                                                  .toString() +
-                                                              ' ريال',
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.green),
-                                                          textDirection:
-                                                              TextDirection.rtl,
+                                                                      0.3)),
                                                         ),
                                                       ],
-                                                    )
+                                                    ),
                                                   ],
                                                 ),
+                                                SizedBox(height: 20),
+                                                shipmentStatus ==
+                                                        'في طريقها للمستلم'
+                                                    ? CustomButton(
+                                                        fontSize: 16,
+                                                        labelText:
+                                                            'تسليم الشحنة للمستلم',
+                                                        padding:
+                                                            EdgeInsets.all(6),
+                                                        function: () {
+                                                          updateStatus(
+                                                              shipmentNumber,
+                                                              'تم التوصيل!');
+                                                          delivered(
+                                                              shipmentNumber);
+                                                        },
+                                                      )
+                                                    : CustomButton(
+                                                        fontSize: 16,
+                                                        labelText: 'استلام',
+                                                        padding:
+                                                            EdgeInsets.all(6),
+                                                        function: () =>
+                                                            updateStatus(
+                                                                shipmentNumber,
+                                                                'في طريقها للمستلم'),
+                                                      )
                                               ],
                                             ),
                                           )),
                                     );
+                                  });
+                            },
+                          );
+                        }
+                        return Container();
+                      });
+                } else {
+                  return StreamBuilder(
+                      stream: getAllAvailibleShipments(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return ListView.builder(
+                            reverse: true,
+                            itemCount: snapshot.data.documents.length,
+                            physics: BouncingScrollPhysics(),
+                            itemBuilder: (BuildContext context, int index) {
+                              String shipmentNumber =
+                                  snapshot.data.documents[index]['shipment_id'];
+                              String shipmentStatus =
+                                  snapshot.data.documents[index]['status'];
+                              int shipmentReceiver =
+                                  snapshot.data.documents[index]['receiverId'];
+                              Timestamp shipmentDate = snapshot
+                                  .data.documents[index]['registrationDate'];
+                              String shipmentDateStr =
+                                  (shipmentDate.toDate().year).toString() +
+                                      '/' +
+                                      (shipmentDate.toDate().month).toString() +
+                                      '/' +
+                                      (shipmentDate.toDate().day).toString();
+                              String senderCity =
+                                  snapshot.data.documents[index]['senderCity'];
+                              String senderAddress = snapshot
+                                  .data.documents[index]['senderAddress'];
+
+                              return FutureBuilder(
+                                  future: getShipmentPrice(snapshot
+                                      .data.documents[index]['shipment_id']),
+                                  builder: (context, snapshot2) {
+                                    return FutureBuilder(
+                                        future: getReceiver(shipmentReceiver),
+                                        builder: (context, snapshot3) {
+                                          return Padding(
+                                            padding: const EdgeInsets.all(5.0),
+                                            child: Card(
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            15)),
+                                                elevation: 5,
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(
+                                                      16.0),
+                                                  child: Column(
+                                                    children: <Widget>[
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        textDirection:
+                                                            TextDirection.rtl,
+                                                        children: <Widget>[
+                                                          Text('شحنة رقم'),
+                                                          Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: <Widget>[
+                                                              Text(
+                                                                shipmentNumber,
+                                                                style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color: Colors
+                                                                        .black
+                                                                        .withOpacity(
+                                                                            0.6)),
+                                                              ),
+                                                              Text(
+                                                                shipmentStatus ==
+                                                                        'بانتظار قبول اي مندوب'
+                                                                    ? 'متوفرة'
+                                                                    : '',
+                                                                style: TextStyle(
+                                                                    color: shipmentStatus ==
+                                                                            'بانتظار قبول اي مندوب'
+                                                                        ? Colors
+                                                                            .green
+                                                                        : Colors
+                                                                            .blue),
+                                                              ),
+                                                              Text(
+                                                                shipmentDateStr,
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .black
+                                                                        .withOpacity(
+                                                                            0.3)),
+                                                              ),
+                                                            ],
+                                                          )
+                                                        ],
+                                                      ),
+                                                      SizedBox(height: 10),
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        textDirection:
+                                                            TextDirection.rtl,
+                                                        children: <Widget>[
+                                                          Text('من'),
+                                                          Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: <Widget>[
+                                                              Text(
+                                                                senderCity,
+                                                                style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color: Colors
+                                                                        .black
+                                                                        .withOpacity(
+                                                                            0.6)),
+                                                              ),
+                                                              Text(
+                                                                senderAddress,
+                                                                style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color: Colors
+                                                                        .black
+                                                                        .withOpacity(
+                                                                            0.6)),
+                                                              ),
+                                                            ],
+                                                          )
+                                                        ],
+                                                      ),
+                                                      SizedBox(height: 10),
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        textDirection:
+                                                            TextDirection.rtl,
+                                                        children: <Widget>[
+                                                          Text('الى'),
+                                                          Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: <Widget>[
+                                                              Text(
+                                                                snapshot3.data[
+                                                                    'receiverCity'],
+                                                                style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color: Colors
+                                                                        .black
+                                                                        .withOpacity(
+                                                                            0.6)),
+                                                              ),
+                                                              Text(
+                                                                snapshot3.data[
+                                                                    'receiverAddress'],
+                                                                style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color: Colors
+                                                                        .black
+                                                                        .withOpacity(
+                                                                            0.6)),
+                                                              ),
+                                                              Text(
+                                                                snapshot2.data
+                                                                        .toString() +
+                                                                    ' ريال',
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .green),
+                                                                textDirection:
+                                                                    TextDirection
+                                                                        .rtl,
+                                                              ),
+                                                            ],
+                                                          )
+                                                        ],
+                                                      ),
+                                                      SizedBox(height: 10),
+                                                      CustomButton(
+                                                        labelText: 'قبول',
+                                                        padding:
+                                                            EdgeInsets.all(0),
+                                                        fontSize: 16,
+                                                        function: () async {
+                                                          await assignToShipment(
+                                                              shipmentNumber);
+                                                        },
+                                                      ),
+                                                    ],
+                                                  ),
+                                                )),
+                                          );
+                                        });
                                   });
                             },
                           );

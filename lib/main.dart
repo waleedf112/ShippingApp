@@ -24,11 +24,12 @@ class MyHomePage extends StatelessWidget {
   TextEditingController usernameController = new TextEditingController();
   TextEditingController passwordController = new TextEditingController();
 
-  Widget _buildTextField({icon, labelText, controller}) {
+  Widget _buildTextField({icon, labelText, controller,isPassword = false}) {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: TextField(
         controller: controller,
+        obscureText: isPassword,
         decoration: InputDecoration(
             labelText: labelText,
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(50)),
@@ -79,6 +80,7 @@ class MyHomePage extends StatelessWidget {
                             icon: Icons.lock,
                             controller: passwordController,
                             labelText: 'كلمة السر',
+                            isPassword: true
                           ),
                           SizedBox(height: 20),
                           CustomButton(
@@ -150,11 +152,19 @@ class MyHomePage extends StatelessWidget {
                                                 _ShowOptions()),
                                       );
                                     } else {
-                                      Navigator.of(context).pushReplacement(
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                CustomerScreen()),
-                                      );
+                                      if (currentUser.type == 'Carrier') {
+                                        Navigator.of(context).pushReplacement(
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  CarrierScreen()),
+                                        );
+                                      } else if (currentUser.type == 'Customer') {
+                                        Navigator.of(context).pushReplacement(
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  CustomerScreen()),
+                                        );
+                                      }
                                     }
                                   } else {
                                     showDialog(
@@ -279,7 +289,6 @@ class _ShowOptions extends StatelessWidget {
                       SizedBox(height: 10),
                       CustomButton(
                         labelText: 'مندوب',
-                        
                         function: () async => assignType(
                           context,
                           'Carrier',
