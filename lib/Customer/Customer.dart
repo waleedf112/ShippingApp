@@ -103,11 +103,12 @@ class CustomerScreen extends StatelessWidget {
                                         ),
                                         Text(
                                           shipmentStatus,
+                                          textDirection: TextDirection.rtl,
                                           style: TextStyle(
-                                              color:
-                                                  shipmentStatus == 'تم التوصيل'
-                                                      ? Colors.green
-                                                      : Colors.blue),
+                                              color: shipmentStatus ==
+                                                      'تم التوصيل!'
+                                                  ? Colors.green
+                                                  : Colors.blue),
                                         ),
                                         Text(
                                           shipmentDateStr,

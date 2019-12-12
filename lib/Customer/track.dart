@@ -76,11 +76,8 @@ class _TrackShipmentState extends State<TrackShipment> {
           StreamBuilder(
             stream: trackShipment(widget.trackingNumber),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
-              print(widget.trackingNumber);
               if (snapshot.hasData && snapshot.data.data != null) {
-                print('=================');
-                print(snapshot.data.data);
-                print('=================');
+
                 String shipmentNumber = snapshot.data.data['shipment_id'];
                 String shipmentStatus = snapshot.data.data['status'];
                 Timestamp shipmentDate = snapshot.data.data['registrationDate'];
@@ -109,12 +106,15 @@ class _TrackShipmentState extends State<TrackShipment> {
                                 children: <Widget>[
                                   Text(
                                     shipmentNumber,
+                                    textDirection: TextDirection.rtl,
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: Colors.black.withOpacity(0.6)),
                                   ),
                                   Text(
                                     shipmentStatus,
+                                    textDirection: TextDirection.rtl,
+
                                     style: TextStyle(
                                         color: shipmentStatus == 'تم التوصيل'
                                             ? Colors.green
@@ -129,38 +129,7 @@ class _TrackShipmentState extends State<TrackShipment> {
                               )
                             ],
                           ),
-                          SizedBox(height: 10),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            textDirection: TextDirection.rtl,
-                            children: <Widget>[
-                              Text('المندوب'),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Text(
-                                    shipmentNumber,
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black.withOpacity(0.6)),
-                                  ),
-                                  Text(
-                                    shipmentStatus,
-                                    style: TextStyle(
-                                        color: shipmentStatus == 'تم التوصيل'
-                                            ? Colors.green
-                                            : Colors.blue),
-                                  ),
-                                  Text(
-                                    shipmentDateStr,
-                                    style: TextStyle(
-                                        color: Colors.black.withOpacity(0.3)),
-                                  ),
-                                ],
-                              )
-                            ],
-                          ),
+                          
                         ],
                       ),
                     ));
