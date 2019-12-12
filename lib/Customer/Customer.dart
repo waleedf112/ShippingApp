@@ -14,7 +14,7 @@ class CustomerScreen extends StatelessWidget {
         appBar: AppBar(
           elevation: 0,
           title: Text(
-            'مرحبا بك يا ${currentUser.username}',
+            'مرحبا بك يا ${currentUser.name}',
             textDirection: TextDirection.rtl,
           ),
           centerTitle: true,

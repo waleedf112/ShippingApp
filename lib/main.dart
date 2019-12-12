@@ -198,6 +198,36 @@ class MyHomePage extends StatelessWidget {
 }
 
 class _ShowOptions extends StatelessWidget {
+  _buildTextField({controller, labelText, icon}) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Directionality(
+        textDirection: TextDirection.rtl,
+        child: TextField(
+          controller: controller,
+          decoration: InputDecoration(
+              labelText: labelText,
+              isDense: true,
+              enabledBorder: OutlineInputBorder(
+                gapPadding: 0,
+                borderRadius: BorderRadius.circular(50),
+                borderSide: BorderSide(color: Colors.green),
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(50),
+                borderSide: BorderSide(color: Colors.green),
+              ),
+              prefixIcon: Icon(
+                icon,
+                color: Colors.green.withOpacity(0.7),
+              )),
+        ),
+      ),
+    );
+  }
+
+  TextEditingController name = new TextEditingController();
+  TextEditingController phoneNumber = new TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -210,30 +240,54 @@ class _ShowOptions extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Card(
-              elevation: 8,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15)),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: <Widget>[
-                    Text(
-                      'اختر نوع الحساب',
-                      style: TextStyle(
-                          fontSize: 30, color: Colors.black.withOpacity(0.7)),
-                    ),
-                    SizedBox(height: 20),
-                    CustomButton(
-                      labelText: 'مرسل او مستقبل',
-                      function: () async => assignType(context, 'Customer'),
-                    ),
-                    SizedBox(height: 10),
-                    CustomButton(
-                      labelText: 'توصيل',
-                      function: () async => assignType(context, 'Carrier'),
-                    ),
-                  ],
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Card(
+                elevation: 8,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15)),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: <Widget>[
+                      Text(
+                        'اختر نوع الحساب',
+                        style: TextStyle(
+                            fontSize: 30, color: Colors.black.withOpacity(0.7)),
+                      ),
+                      SizedBox(height: 20),
+                      _buildTextField(
+                        labelText: 'الاسم',
+                        icon: Icons.person,
+                        controller: name,
+                      ),
+                      _buildTextField(
+                        labelText: 'رقم الجوال',
+                        icon: Icons.person,
+                        controller: phoneNumber,
+                      ),
+                      SizedBox(height: 20),
+                      CustomButton(
+                        labelText: 'مرسل او مستقبل',
+                        function: () async => assignType(
+                          context,
+                          'Customer',
+                          name.text.trim(),
+                          phoneNumber.text.trim(),
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      CustomButton(
+                        labelText: 'توصيل',
+                        function: () async => assignType(
+                          context,
+                          'Carrier',
+                          name.text.trim(),
+                          phoneNumber.text.trim(),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

@@ -7,14 +7,18 @@ import '../loading.dart';
 
 class User {
   String username;
+  String name;
+  String phoneNumber;
   String type;
 
-  User({this.username, this.type});
+  User({this.username, this.type, this.name, this.phoneNumber});
 
   User.updateDB() {
     Firestore.instance.collection('User').document(this.username).updateData({
       'username': this.username,
+      'name': this.name,
       'type': this.type,
+      'phoneNumber': this.phoneNumber,
     });
   }
 }
@@ -68,6 +72,8 @@ Future<bool> loginUser(context, Map<String, String> userData) async {
             currentUser = new User(
               username: onValue.data['username'],
               type: onValue.data['type'],
+              name: onValue.data['name'],
+              phoneNumber: onValue.data['phoneNumber'],
             );
           }
         });
@@ -77,7 +83,8 @@ Future<bool> loginUser(context, Map<String, String> userData) async {
   });
 }
 
-Future<void> assignType(BuildContext context, String type) {
+Future<void> assignType(
+    BuildContext context, String type, String name, String phoneNumber) {
   loadingScreen(
       context: context,
       function: () async {
@@ -86,19 +93,22 @@ Future<void> assignType(BuildContext context, String type) {
             .document(currentUser.username)
             .updateData({
           'type': type,
+          'name': name,
+          'phoneNumber': phoneNumber
         }).then((onValue) {
+          currentUser.name = name;
+          currentUser.phoneNumber = phoneNumber;
           Navigator.of(context).pop();
         });
-      }).whenComplete((){
- if (type == 'Carrier') {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => CarrierScreen()),
-    );
-  } else if (type == 'Customer') {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => CustomerScreen()),
-    );
-  }
-      });
- 
+      }).whenComplete(() {
+    if (type == 'Carrier') {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => CarrierScreen()),
+      );
+    } else if (type == 'Customer') {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => CustomerScreen()),
+      );
+    }
+  });
 }
