@@ -22,7 +22,7 @@ class Shipment {
     this.id = i;
     this.registrationDate = DateTime.now();
     this.receiverId = r;
-    this.status = 'بانتظار المرسل';
+    this.status = 'بانتظار قبول اي مندوب';
     this.packages = p;
   }
 }

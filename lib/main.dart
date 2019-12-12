@@ -278,7 +278,8 @@ class _ShowOptions extends StatelessWidget {
                       ),
                       SizedBox(height: 10),
                       CustomButton(
-                        labelText: 'توصيل',
+                        labelText: 'مندوب',
+                        
                         function: () async => assignType(
                           context,
                           'Carrier',

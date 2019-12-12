@@ -3,15 +3,14 @@ import 'package:database2_project_shipping_app/Customer/SendPackage.dart';
 
 import 'SignupAndSignin.dart';
 
-getAllActiveShipments() {
+Stream getAllActiveShipments() {
   return Firestore.instance
       .collection('Shipments')
       .where('sender_userName', isEqualTo: currentUser.username)
-      .getDocuments()
-      .asStream();
+      .snapshots();
 }
 
-placeNewShipment(Shipment shipment) async {
+ placeNewShipment(Shipment shipment) async {
   String shipment_id = shipment.id.toString();
   String receiver_id = shipment.receiverId.toString();
   await Firestore.instance
@@ -49,4 +48,11 @@ placeNewShipment(Shipment shipment) async {
     'receiverCity': shipment.receiverCity,
     'receiverAddress': shipment.receiverAddress,
   });
+}
+
+Stream trackShipment(int trackingNumber){
+    return Firestore.instance
+      .collection('Shipments')
+      .where('shipment_id', isEqualTo: trackingNumber)
+      .snapshots();
 }
