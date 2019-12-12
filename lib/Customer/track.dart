@@ -3,7 +3,7 @@ import 'package:database2_project_shipping_app/FirebaseDatabase/CustomerOrder.da
 import 'package:flutter/material.dart';
 
 class TrackShipment extends StatefulWidget {
-  int trackingNumber;
+  int trackingNumber = 0;
   TextEditingController trackingController = new TextEditingController();
   @override
   _TrackShipmentState createState() => _TrackShipmentState();
@@ -42,6 +42,7 @@ class _TrackShipmentState extends State<TrackShipment> {
                     child: Directionality(
                       textDirection: TextDirection.rtl,
                       child: TextFormField(
+                        controller: widget.trackingController,
                         keyboardType: TextInputType.numberWithOptions(),
                         decoration: InputDecoration(
                           prefixIcon: Icon(
@@ -75,12 +76,14 @@ class _TrackShipmentState extends State<TrackShipment> {
           StreamBuilder(
             stream: trackShipment(widget.trackingNumber),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
-              if (snapshot.hasData) {
-                String shipmentNumber =
-                    snapshot.data.documents[0]['shipment_id'];
-                String shipmentStatus = snapshot.data.documents[0]['status'];
-                Timestamp shipmentDate =
-                    snapshot.data.documents[0]['registrationDate'];
+              print(widget.trackingNumber);
+              if (snapshot.hasData && snapshot.data.data != null) {
+                print('=================');
+                print(snapshot.data.data);
+                print('=================');
+                String shipmentNumber = snapshot.data.data['shipment_id'];
+                String shipmentStatus = snapshot.data.data['status'];
+                Timestamp shipmentDate = snapshot.data.data['registrationDate'];
                 String shipmentDateStr =
                     (shipmentDate.toDate().year).toString() +
                         '/' +
@@ -126,7 +129,7 @@ class _TrackShipmentState extends State<TrackShipment> {
                               )
                             ],
                           ),
-                         SizedBox(height: 10),
+                          SizedBox(height: 10),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -136,7 +139,6 @@ class _TrackShipmentState extends State<TrackShipment> {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
-
                                   Text(
                                     shipmentNumber,
                                     style: TextStyle(
@@ -162,8 +164,22 @@ class _TrackShipmentState extends State<TrackShipment> {
                         ],
                       ),
                     ));
+              } else {
+                return Center(
+                    child: Padding(
+                  padding: const EdgeInsets.only(top: 50),
+                  child: Text(
+                    widget.trackingNumber == 0
+                        ? ''
+                        : 'لاتوجد أي شحنة بهذا الرقم!',
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.red,
+                    ),
+                    textDirection: TextDirection.rtl,
+                  ),
+                ));
               }
-              return Container();
             },
           ),
         ],

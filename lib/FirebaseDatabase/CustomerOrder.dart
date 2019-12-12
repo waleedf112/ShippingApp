@@ -51,8 +51,9 @@ Stream getAllActiveShipments() {
 }
 
 Stream trackShipment(int trackingNumber){
+  print(trackingNumber);
     return Firestore.instance
       .collection('Shipments')
-      .where('shipment_id', isEqualTo: trackingNumber)
+      .document(trackingNumber.toString())
       .snapshots();
 }
