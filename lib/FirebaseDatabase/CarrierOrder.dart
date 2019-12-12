@@ -37,18 +37,15 @@ Future getShipmentPrice(shipment_id) async {
   return price;
 }
 
-Future getReceiver(shipmentReceiver) async {
+Stream getReceiver(shipmentReceiver) {
   return Firestore.instance
       .collection('Receivers')
-      .document(shipmentReceiver.toString())
-      .get();
+      .where('receiver_id', isEqualTo: shipmentReceiver)
+      .snapshots();
 }
 
 Future getSender(shipmentSender) async {
-  return Firestore.instance
-      .collection('User')
-      .document(shipmentSender)
-      .get();
+  return Firestore.instance.collection('User').document(shipmentSender).get();
 }
 
 Future assignToShipment(shipment_id) async {
