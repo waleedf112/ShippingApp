@@ -58,7 +58,7 @@ class _CarrierScreenState extends State<CarrierScreen> {
                               return FutureBuilder(
                                   future: getSender(shipmentSender),
                                   builder: (context, snapshot3) {
-                                    if (snapshot3.hasData) {
+                                    if (snapshot3.hasData && snapshot3.data!=null) {
                                       return Padding(
                                         padding: const EdgeInsets.all(5.0),
                                         child: Card(
