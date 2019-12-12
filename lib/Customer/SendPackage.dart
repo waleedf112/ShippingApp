@@ -1,15 +1,22 @@
+import 'package:database2_project_shipping_app/FirebaseDatabase/CustomerOrder.dart';
 import 'package:flutter/material.dart';
 
+import '../loading.dart';
 import '../main.dart';
 
 class Shipment {
   int id;
   String status;
   String carrierName;
-  String carrierPhone;
   DateTime registrationDate;
   int receiverId;
   List<Package> packages = new List();
+  String senderCity;
+  String senderAddress;
+  String receiverName;
+  String receiverphone;
+  String receiverCity;
+  String receiverAddress;
 
   Shipment(i, r, p) {
     this.id = i;
@@ -96,6 +103,8 @@ class _SendPackageState extends State<SendPackage> {
       ),
       appBar: AppBar(
         elevation: 0,
+        centerTitle: true,
+        title: Text('الشحنات'),
         actions: <Widget>[
           IconButton(
             onPressed: () {
@@ -103,6 +112,10 @@ class _SendPackageState extends State<SendPackage> {
                   DateTime.now().millisecondsSinceEpoch,
                   DateTime.now().millisecondsSinceEpoch,
                   widget.packages);
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                    builder: (context) => _RecevierInfo(shipment: _shipment)),
+              );
             },
             icon: Icon(Icons.send),
           )
@@ -196,85 +209,205 @@ class _SendPackageState extends State<SendPackage> {
   }
 }
 
-/*
-SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Card(
-                elevation: 5,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    children: <Widget>[
-                      Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                'بيانات المرسل',
-                                style: TextStyle(
-                                    fontSize: 20,
-                                    color: Colors.black.withOpacity(0.5)),
-                                textAlign: TextAlign.end,
-                              ),
-                            ),
-                          )
+class _RecevierInfo extends StatelessWidget {
+  final Shipment shipment;
+  TextEditingController senderCity = new TextEditingController();
+  TextEditingController senderAddress = new TextEditingController();
+  TextEditingController receiverName = new TextEditingController();
+  TextEditingController receiverphone = new TextEditingController();
+  TextEditingController receiverCity = new TextEditingController();
+  TextEditingController receiverAddress = new TextEditingController();
+  _RecevierInfo({this.shipment});
+
+  _buildTextField({labelText, icon, controller}) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Directionality(
+        textDirection: TextDirection.rtl,
+        child: TextFormField(
+          controller: controller,
+          decoration: InputDecoration(
+              labelText: labelText,
+              isDense: true,
+              enabledBorder: OutlineInputBorder(
+                gapPadding: 0,
+                borderRadius: BorderRadius.circular(50),
+                borderSide: BorderSide(color: Colors.green),
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(50),
+                borderSide: BorderSide(color: Colors.green),
+              ),
+              prefixIcon: Icon(
+                icon,
+                color: Colors.green.withOpacity(0.7),
+              )),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        title: Text('بيانات الشحنة'),
+        centerTitle: true,
+        actions: <Widget>[
+          IconButton(
+            onPressed: () {
+              if (senderCity.text.trim().isEmpty ||
+                  senderAddress.text.trim().isEmpty ||
+                  receiverName.text.trim().isEmpty ||
+                  receiverphone.text.trim().isEmpty ||
+                  receiverCity.text.trim().isEmpty ||
+                  receiverAddress.text.trim().isEmpty) {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return Directionality(
+                      textDirection: TextDirection.rtl,
+                      child: AlertDialog(
+                        title: new Text("حقل فارغ!"),
+                        content: new Text(
+                          'يوجد حقل فارغ!',
+                        ),
+                        actions: <Widget>[
+                          new FlatButton(
+                            child: new Text("حسناً"),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
                         ],
                       ),
-                      _buildTextField(
-                          icon: Icons.location_city, labelText: 'المدينة'),
-                      _buildTextField(
-                          icon: Icons.store_mall_directory,
-                          labelText: 'العنوان'),
-                    ],
-                  ),
+                    );
+                  },
+                );
+              } else {
+                shipment.senderCity = senderCity.text.trim();
+                shipment.senderAddress = senderAddress.text.trim();
+                shipment.receiverName = receiverName.text.trim();
+                shipment.receiverphone = receiverphone.text.trim();
+                shipment.receiverCity = receiverCity.text.trim();
+                shipment.receiverAddress = receiverAddress.text.trim();
+                
+                loadingScreen(
+                    context: context,
+                    function: () async {
+                      await placeNewShipment(shipment).whenComplete(() {
+                        Navigator.of(context).pop();
+                        Navigator.of(context).pop();
+                        Navigator.of(context).pop();
+                      });
+                    });
+              }
+            },
+            icon: Icon(Icons.send),
+          )
+        ],
+      ),
+      body: ListView(
+        physics: BouncingScrollPhysics(),
+        children: <Widget>[
+          SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Card(
+              elevation: 5,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              'بيانات المرسل',
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.black.withOpacity(0.5)),
+                              textAlign: TextAlign.end,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    _buildTextField(
+                      icon: Icons.location_city,
+                      labelText: 'المدينة',
+                      controller: senderCity,
+                    ),
+                    _buildTextField(
+                      icon: Icons.store_mall_directory,
+                      labelText: 'العنوان',
+                      controller: senderAddress,
+                    ),
+                  ],
                 ),
               ),
             ),
-            SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Card(
-                elevation: 5,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    children: <Widget>[
-                      Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                'بيانات المستلم',
-                                style: TextStyle(
-                                    fontSize: 20,
-                                    color: Colors.black.withOpacity(0.5)),
-                                textAlign: TextAlign.end,
-                              ),
+          ),
+          SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Card(
+              elevation: 5,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              'بيانات المستلم',
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.black.withOpacity(0.5)),
+                              textAlign: TextAlign.end,
                             ),
-                          )
-                        ],
-                      ),
-                      _buildTextField(
-                          icon: Icons.person, labelText: 'اسم المستلم'),
-                      _buildTextField(
-                          icon: Icons.phone_iphone, labelText: 'رقم الجوال'),
-                      _buildTextField(
-                          icon: Icons.location_city, labelText: 'المدينة'),
-                      _buildTextField(
-                          icon: Icons.store_mall_directory,
-                          labelText: 'العنوان'),
-                    ],
-                  ),
+                          ),
+                        )
+                      ],
+                    ),
+                    _buildTextField(
+                        icon: Icons.person,
+                        labelText: 'اسم المستلم',
+                        controller: receiverName),
+                    _buildTextField(
+                        icon: Icons.phone_iphone,
+                        labelText: 'رقم الجوال',
+                        controller: receiverphone),
+                    _buildTextField(
+                        icon: Icons.location_city,
+                        labelText: 'المدينة',
+                        controller: receiverCity),
+                    _buildTextField(
+                        icon: Icons.store_mall_directory,
+                        labelText: 'العنوان',
+                        controller: receiverAddress),
+                  ],
                 ),
               ),
-            )
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+/*
+
 */

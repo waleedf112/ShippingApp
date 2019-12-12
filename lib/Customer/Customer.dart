@@ -50,10 +50,10 @@ class CustomerScreen extends StatelessWidget {
               ),
             ),
             StreamBuilder(
-                stream: getAllActiveOrders(),
+                stream: getAllActiveShipments(),
                 builder: (context, snapshot) {
                   return ListView.builder(
-                    itemCount: 50, //snapshot.data.documents.length,
+                    itemCount: snapshot.data.documents.length,
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
                     itemBuilder: (BuildContext context, int index) {
